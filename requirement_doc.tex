@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{arcs}
+\usepackage{abraces}
+\usepackage{tikz}
+
+%\newcommand{\smileunder}[1]{\underset{\smile}{#1}}
+
+\newcommand{\matra}[1]{
+  \begin{tikzpicture}[baseline=(X.base)]
+    \node[inner sep=0pt] (X) {#1};
+    \draw[thick] ([xshift=-0.1em]X.south west) to[bend right=45] ([xshift=0.1em]X.south east);
+  \end{tikzpicture}
+}
+
+\newcommand{\meend}[1]{
+  \begin{tikzpicture}[baseline=(X.base)]
+    \node[inner sep=0pt] (X) {#1};
+    \draw[thick] ([xshift=-0.1em]X.north west) to[bend left=45] ([xshift=0.1em]X.north east);
+  \end{tikzpicture}
+}
+
+\begin{document}
+
+\section{ Notes and Scales in Hindustani Music}
+
+The basic alphabets of the Hindustani music would be the following.
+
+\begin{itemize}
+\item Mandra Saptak - \d{S} \d{\b{R}} \d{R} \d{\b{G}} \d{G} \d{M} \d{\'{M}} \d{P} \d{\b{D}} \d{D}  \d{\b{N}} \d{N}
+\item Madhya Saptak - S \b{R} R \b{G} G M \'{M} P \b{D} D \b{N} N
+\item Tara Saptak - \.{S} \b{\.{R}} \.{R} \b{\.{G}} \.{G} \.{M}  \.{\'{M}} \.{P} \b{\.{D}} \.{D} \b{\.{N}} \.{N}
+\end{itemize}
+
+Every composition will be written using the above notes.
+We need  a way for the user  to be able  to write each of these notes  fast.
+We can follow  the  following notation to write  the notes in Madhya  Saptak(middle  octave)
+\begin{itemize}
+	\item S - Shudha Sa -  S
+	\item r - Komal Re - \b{R}
+	\item R - Shudha Re - R
+	\item g - Komal Ga - \b{G}
+	\item G - Shudha Ga - G
+	\item m - Shudha M - M
+	\item M - Teevra M - \'{M}
+	\item P - Shudha P - P
+	\item d - Komal Da - \b{D}
+	\item D - Shudha Da - D
+	\item n - Komal Ni - \b{N}
+	\item N - Shudha Ni - N	
+\end{itemize}
+
+For the Mandra Saptak  we can use S1, r1, R1,  g1, G1, m1, M1, P1, d1, D1, n1, N1
+
+For the Tara Saptak we can use  S2, r2, R2,  g2, G2, m2, M2, P2, d2, D2, n2, N2
+
+So something  written as S R G m P D N S2 should be rendered as
+S R G M P D N \.{S}
+
+\section{Representing the notes per beat}
+
+\begin{itemize}
+\item $\dfrac{1}{2} beat\matra{SR}$
+\item $\dfrac{1}{4} beat\matra{SRGM}$
+\item One Beat - SR
+\item $1\dfrac{1}{2} beat - S\matra{-R  }$ 
+\end{itemize}
+
+\section{Ornamentation}
+\begin{itemize}
+\item Meend - \meend{SR}
+\item Kan - $^{D}P$
+\item Khatka (P) - \matra{PDMP}
+\end{itemize}
+\end{document}
