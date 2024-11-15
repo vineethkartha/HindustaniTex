@@ -63,20 +63,19 @@
 \newcommand{\nii}{\b{N}}
 \newcommand{\Nii}{N}
 
-% Notes for Tara Saptak (Higher octave)
-\newcommand{\hsa}{\.{S}} 
-\newcommand{\hri}{\.{\b{R}}} 
-\newcommand{\hRi}{\.{R}}
-\newcommand{\hga}{\.{\b{G}}}
-\newcommand{\hGa}{\.{G}}
-\newcommand{\hma}{\.{M}}
-\newcommand{\hMa}{\.{\'{M}}}
-\newcommand{\hpa}{\.{P}}
-\newcommand{\hdha}{\.{\b{D}}}
-\newcommand{\hDha}{\.{D}}
-\newcommand{\hnii}{\.{\b{N}}}
-\newcommand{\hNii}{\.{N}}
-
+% Notes for Tara Saptak (Higher octave) - Adjusted for proper math rendering
+\newcommand{\hsa}{\ensuremath{\dot{\mathord{S}}}} 
+\newcommand{\hri}{\ensuremath{\dot{\mathord{\b{R}}}}} 
+\newcommand{\hRi}{\ensuremath{\dot{\mathord{R}}}}
+\newcommand{\hga}{\ensuremath{\dot{\mathord{\b{G}}}}}
+\newcommand{\hGa}{\ensuremath{\dot{\mathord{G}}}}
+\newcommand{\hma}{\ensuremath{\dot{\mathord{M}}}}
+\newcommand{\hMa}{\ensuremath{\dot{\mathord{{\'{M}}}}}}
+\newcommand{\hpa}{\ensuremath{\dot{\mathord{P}}}}
+\newcommand{\hdha}{\ensuremath{\dot{\mathord{\b{D}}}}}
+\newcommand{\hDha}{\ensuremath{\dot{\mathord{D}}}}
+\newcommand{\hnii}{\ensuremath{\dot{\mathord{\b{N}}}}}
+\newcommand{\hNii}{\ensuremath{\dot{\mathord{N}}}}
 
 % Define a new command that maps letters to notes
 \ExplSyntaxOn
@@ -88,51 +87,53 @@
 % Define the mapping function
 \cs_new_protected:Nn \bhavik_convert_notes:n
  {
-   % Map each character to a command
-   \tl_map_inline:nn { #1 }
-    {
-      \str_case:nn { ##1 }
-       {
-         {s1}{\lsa}
-         {r1}{\lri}
-         {R1}{\lRi}
-         {g1}{\lga}
-         {G1}{\lGa}
-         {m1}{\lma}
-         {M1}{\lMa}
-         {P1}{\lpa}
-         {d1}{\ldha}
-         {D1}{\lDha}
-         {n1}{\lnii}
-         {N1}{\lNii}
-         {s}{\sa}
-         {r}{\ri}
-         {R}{\Ri}
-         {g}{\ga}
-         {G}{\Ga}
-         {m}{\ma}
-         {M}{\Ma}
-         {P}{\pa}
-         {d}{\dha}
-         {D}{\Dha}
-         {n}{\nii}
-         {N}{\Nii}
-         {s2}{\hsa}
-         {r2}{\hri}
-         {R2}{\hRi}
-         {g2}{\hga}
-         {G2}{\hGa}
-         {m2}{\hma}
-         {M2}{\hMa}
-         {P2}{\hpa}
-         {d2}{\hdha}
-         {D2}{\hDha}
-         {n2}{\hnii}
-         {N2}{\hNii}
-         % Add more mappings if needed
-       }
-       \space % Add space between notes
-    }
+   % Step 1: Handle Mandra and Madhya Saptak (suffix '1')
+   \tl_set:Nx \l_temp_tl { #1 }
+   
+   % Step 2: Handle Tara Saptak 
+   \tl_replace_all:Nnn \l_temp_tl {s2} {\hsa}
+   \tl_replace_all:Nnn \l_temp_tl {r2} {\hri}
+   \tl_replace_all:Nnn \l_temp_tl {R2} {\hRi}
+   \tl_replace_all:Nnn \l_temp_tl {g2} {\hga}
+   \tl_replace_all:Nnn \l_temp_tl {G2} {\hGa}
+   \tl_replace_all:Nnn \l_temp_tl {m2} {\hma}
+   \tl_replace_all:Nnn \l_temp_tl {M2} {\hMa}
+   \tl_replace_all:Nnn \l_temp_tl {P2} {\hpa}
+   \tl_replace_all:Nnn \l_temp_tl {d2} {\hdha}
+   \tl_replace_all:Nnn \l_temp_tl {D2} {\hDha}
+   \tl_replace_all:Nnn \l_temp_tl {n2} {\hnii}
+   \tl_replace_all:Nnn \l_temp_tl {N2} {\hNii}
+   
+   
+   % Replace with mappings for suffix 1
+   \tl_replace_all:Nnn \l_temp_tl {s1} {\lsa}
+   \tl_replace_all:Nnn \l_temp_tl {r1} {\lri}
+   \tl_replace_all:Nnn \l_temp_tl {R1} {\lRi}
+   \tl_replace_all:Nnn \l_temp_tl {g1} {\lga}
+   \tl_replace_all:Nnn \l_temp_tl {G1} {\lGa}
+   \tl_replace_all:Nnn \l_temp_tl {m1} {\lma}
+   \tl_replace_all:Nnn \l_temp_tl {M1} {\lMa}
+   \tl_replace_all:Nnn \l_temp_tl {P1} {\lpa}
+   \tl_replace_all:Nnn \l_temp_tl {d1} {\ldha}
+   \tl_replace_all:Nnn \l_temp_tl {D1} {\lDha}
+   \tl_replace_all:Nnn \l_temp_tl {n1} {\lnii}
+   \tl_replace_all:Nnn \l_temp_tl {N1} {\lNii}
+   \tl_replace_all:Nnn \l_temp_tl {s} {\sa}
+   \tl_replace_all:Nnn \l_temp_tl {r} {\ri}
+   \tl_replace_all:Nnn \l_temp_tl {R} {\Ri}
+   \tl_replace_all:Nnn \l_temp_tl {g} {\ga}
+   \tl_replace_all:Nnn \l_temp_tl {G} {\Ga}
+   \tl_replace_all:Nnn \l_temp_tl {m} {\ma}
+   \tl_replace_all:Nnn \l_temp_tl {M} {\Ma}
+   \tl_replace_all:Nnn \l_temp_tl {P} {\pa}
+   \tl_replace_all:Nnn \l_temp_tl {d} {\dha}
+   \tl_replace_all:Nnn \l_temp_tl {D} {\Dha}
+   \tl_replace_all:Nnn \l_temp_tl {n} {\nii}
+   \tl_replace_all:Nnn \l_temp_tl {N} {\Nii}
+   
+
+   % Output the final converted text
+   \tl_use:N \l_temp_tl
  }
 \ExplSyntaxOff
 
