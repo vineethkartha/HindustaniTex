@@ -30,7 +30,6 @@
 
 % Commands for specific Hindustani music elements
 \newcommand{\raag}[1]{\section*{Raag: #1}}
-%\newcommand{\alankar}{\subsection*{Alankaars}}
 \newcommand{\aaroha}[1]{\textbf{Aaroha:  }    {#1}}
 \newcommand{\avaroha}[1]{\textbf{Avaroha: }{#1}}
 \newcommand{\alankar}[2]{\aaroha{#1} \\ \avaroha{#2}}
@@ -129,18 +128,109 @@
    \tl_replace_all:Nnn \l_temp_tl {d} {\dha}
    \tl_replace_all:Nnn \l_temp_tl {D} {\Dha}
    \tl_replace_all:Nnn \l_temp_tl {n} {\nii}
-   \tl_replace_all:Nnn \l_temp_tl {N} {\Nii}
-   
+   \tl_replace_all:Nnn \l_temp_tl {N} {\Nii} 
 
    % Output the final converted text
    \tl_use:N \l_temp_tl
  }
 \ExplSyntaxOff
 
+\ExplSyntaxOn
+ % Helper function to process cells
+\cs_new:Nn \taal_format_cell:n
+ {
+  % Check if the input contains '*'
+  \tl_set:Nn \l_tmpa_tl {#1}
+  \tl_if_in:nnTF {#1} {*}
+    {
+       % Remove the '*' and apply matra to the content
+      \tl_replace_all:Nnn \l_tmpa_tl {*} {}
+      \matra{\cn{\l_tmpa_tl}} % Render with \matra
+    }
+    {
+      % Render the cell content normally if no *
+      \cn{\l_tmpa_tl}
+    }
+ }
+
+
+\NewDocumentCommand{\teentaal}{ m }
+ {
+ \begin{center}
+   \resizebox{\textwidth}{!}{
+   \begin{tabular}{|cccc|cccc|cccc|cccc|} \hline
+    \textbf{Dha} & \textbf{dhin} & \textbf{dhin} & \textbf{Dha} & 
+    \textbf{Dha} & \textbf{dhin} & \textbf{dhin} & \textbf{Dha} & 
+    \textbf{Dha} & \textbf{tin} & \textbf{tin} & \textbf{ta} & 
+    \textbf{Tita} & \textbf{tin} & \textbf{tin} & \textbf{dha} \\ \hline
+    \teentaal_process_input:nN { #1 }{16}
+  \end{tabular}
+  }
+  
+ \end{center}
+ }
+ 
+ \NewDocumentCommand{\roopaktaal}{ m }
+ {
+   \begin{tabular}{|ccc|cc|cc|} \hline
+    \textbf{Ti} & \textbf{Ti} & \textbf{na} & \textbf{Dhi} & \textbf{na} &\textbf{Dhi} & \textbf{na} \\ \hline
+    \teentaal_process_input:nN { #1 }{7}
+  \end{tabular}  
+ }
+
+% Process input and handle rows
+\cs_new:Nn \teentaal_process_input:nN
+ {
+  % Split the input by commas
+  \seq_set_split:Nnn \l_tmpa_seq { , } { #1 }
+
+  % Initialize a global counter
+  \int_gzero:N \g_tmpa_int
+  
+  % Get the total number of elements
+  \int_gset:Nn \g_tmpb_int { \seq_count:N \l_tmpa_seq }
+
+  % Iterate over the sequence
+  \seq_map_inline:Nn \l_tmpa_seq
+   {
+    % Increment the counter
+    \int_gincr:N \g_tmpa_int
+    
+    % Print the current item
+    \taal_format_cell:n{##1}
+
+    % Add separator (&) or row end (\\ or \hline)
+    \int_compare:nNnTF { \int_mod:nn { \g_tmpa_int } { #2 } } = { 0 }
+     {
+      % Check if it's the last row
+      \int_compare:nNnTF { \g_tmpa_int } = { \g_tmpb_int }
+       { \\ \hline }     % Otherwise, start a new row
+       {\\}
+     }
+     { & }  % Otherwise, continue the row
+   }
+
+  % Add "-" for the rows where there are not enough elements
+  \int_compare:nNnT { \int_mod:nn { \g_tmpa_int } { #2 } } > { 0 }
+   {
+    % Calculate remaining columns
+    \int_set:Nn \l_tmpb_int { #2 - \int_mod:nn { \g_tmpa_int } { #2 } }
+    
+    % Add empty cells
+    \int_step_inline:nn { \l_tmpb_int -1 }
+     { x & }
+
+    % Close the last row
+     x \\ \hline
+   }
+ }
+\ExplSyntaxOff
+
+
 % Representing notes per beat
 \newcommand{\matra}[1]{%
   \tikz[baseline=(X.base)]{
-    \node[inner sep=0pt] (X) {\raisebox{-0.2em}{#1}};
+    \node[inner sep=0pt] (X) {\raisebox{-0.2em}{\cn{#1}}};
     \draw[thick] ([xshift=-0.1em]X.south west) to[bend right=45] ([xshift=0.1em]X.south east);
   }%
 }
@@ -149,7 +239,7 @@
 % Representation of Meend
 \newcommand{\meend}[1]{
   \begin{tikzpicture}[baseline=(X.base)]
-    \node[inner sep=0pt] (X) {#1};
+    \node[inner sep=0pt] (X) {\cn{#1}};
     \draw[thick] ([xshift=-0.1em]X.north west) to[bend left=45] ([xshift=0.1em]X.north east);
   \end{tikzpicture}
 }
