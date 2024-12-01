@@ -80,11 +80,11 @@
 \ExplSyntaxOn
 \NewDocumentCommand{\cn}{m}
  {
-   \bhavik_convert_notes:n { #1 }
+   \convert_notes:n { #1 }
  }
 
 % Define the mapping function
-\cs_new_protected:Nn \bhavik_convert_notes:n
+\cs_new_protected:Nn \convert_notes:n
  {
    % Step 1: Handle Mandra and Madhya Saptak (suffix '1')
    \tl_set:Nx \l_temp_tl { #1 }
@@ -135,24 +135,27 @@
  }
 \ExplSyntaxOff
 
-\ExplSyntaxOn
- % Helper function to process cells
-\cs_new:Nn \taal_format_cell:n
- {
-  % Check if the input contains '*'
-  \tl_set:Nn \l_tmpa_tl {#1}
-  \tl_if_in:nnTF {#1} {*}
-    {
-       % Remove the '*' and apply matra to the content
-      \tl_replace_all:Nnn \l_tmpa_tl {*} {}
-      \matra{\cn{\l_tmpa_tl}} % Render with \matra
-    }
-    {
-      % Render the cell content normally if no *
-      \cn{\l_tmpa_tl}
-    }
- }
+% Representing notes per beat
+\newcommand{\matra}[1]{%
+  \tikz[baseline=(X.base)]{
+    \node[inner sep=0pt] (X) {\raisebox{-0.1em}{\cn{#1}}};
+    \draw[thick] ([xshift=-0.1em]X.south west) to[bend right=15] ([xshift=0.1em]X.south east);
+  }%
+}
 
+
+% Representation of Meend
+\newcommand{\meend}[1]{
+  \begin{tikzpicture}[baseline=(X.base)]
+    \node[inner sep=0pt] (X) {\cn{#1}};
+    \draw[thick] ([xshift=-0.1em]X.north west) to[bend left=15] ([xshift=0.1em]X.north east);
+  \end{tikzpicture}
+}
+
+\newcommand{\kan}[2]{$^{#1}#2$}
+
+
+\ExplSyntaxOn
 
 \NewDocumentCommand{\teentaal}{ m }
  {
@@ -170,13 +173,50 @@
  \end{center}
  }
  
- \NewDocumentCommand{\roopaktaal}{ m }
+\NewDocumentCommand{\roopaktaal}{ m }
  {
+ 
    \begin{tabular}{|ccc|cc|cc|} \hline
     \textbf{Ti} & \textbf{Ti} & \textbf{na} & \textbf{Dhi} & \textbf{na} &\textbf{Dhi} & \textbf{na} \\ \hline
     \teentaal_process_input:nN { #1 }{7}
   \end{tabular}  
  }
+
+
+\cs_new:Nn \process_notes:n
+{
+  \tl_if_in:nnTF {#1} {*}
+  {
+    \process_matra:n {#1}
+  }
+  {
+    \tl_if_in:nnTF {#1} {`}
+    {
+      \process_gamak:n {#1}
+    }
+    {
+      \convert_notes:n {#1}
+    }
+  }
+}
+
+% Helper function for '`'
+\cs_new:Nn \process_gamak:n
+{
+% Debug: Print the cleaned note after removing ~
+  \tl_set:Nn \l_tmpb_tl {#1}
+  \tl_replace_all:Nnn \l_tmpb_tl {`} {}
+  \meend{\cn{\l_tmpb_tl}}
+}
+
+% Helper function for '*'
+\cs_new:Nn \process_matra:n
+{
+  \tl_set:Nn \l_tmpb_tl {#1}
+  \tl_replace_all:Nnn \l_tmpb_tl {*} {}
+  \matra{\cn{\l_tmpb_tl}}
+}
+
 
 % Process input and handle rows
 \cs_new:Nn \teentaal_process_input:nN
@@ -197,7 +237,7 @@
     \int_gincr:N \g_tmpa_int
     
     % Print the current item
-    \taal_format_cell:n{##1}
+    \process_notes:n{##1}
 
     % Add separator (&) or row end (\\ or \hline)
     \int_compare:nNnTF { \int_mod:nn { \g_tmpa_int } { #2 } } = { 0 }
@@ -226,25 +266,6 @@
  }
 \ExplSyntaxOff
 
-
-% Representing notes per beat
-\newcommand{\matra}[1]{%
-  \tikz[baseline=(X.base)]{
-    \node[inner sep=0pt] (X) {\raisebox{-0.2em}{\cn{#1}}};
-    \draw[thick] ([xshift=-0.1em]X.south west) to[bend right=45] ([xshift=0.1em]X.south east);
-  }%
-}
-
-
-% Representation of Meend
-\newcommand{\meend}[1]{
-  \begin{tikzpicture}[baseline=(X.base)]
-    \node[inner sep=0pt] (X) {\cn{#1}};
-    \draw[thick] ([xshift=-0.1em]X.north west) to[bend left=45] ([xshift=0.1em]X.north east);
-  \end{tikzpicture}
-}
-
-\newcommand{\kan}[2]{$^{#1}#2$}
 
 % Environment for Composition (Bandish)
 \newenvironment{composition}
